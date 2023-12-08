@@ -1,7 +1,7 @@
-# @tinkoff/request
+# @tramvai/request
 Modular lightweight request library extendable by plugins.
 
-[Documentation](https://tinkoff.github.io/tinkoff-request/)
+[Documentation](https://tramvaijs.github.io/request/)
 
 [![Edit on CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/tinkoff-request-playground-0t1wrs?file=/src/index.ts)
 

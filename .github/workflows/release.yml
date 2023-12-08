@@ -40,7 +40,6 @@ jobs:
           git diff --exit-code || (echo "Найдены изменения в файлах package.json – выполните `yarn build` в корне репозитория и запушьте изменения" && exit 127)
 
       - name: Release packages
-        if: false
         run: yarn release
         env:
           GH_TOKEN: ${{ secrets.TRAMVAI_GH_PAGES_PAT }}
