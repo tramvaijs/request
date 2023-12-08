@@ -11,16 +11,16 @@
 /* List of projects/orgs using your project for the users page */
 
 const siteConfig = {
-    title: '@tinkoff/request' /* title for your website */,
+    title: '@tramvai/request' /* title for your website */,
     tagline: 'Construct your own request library',
-    baseUrl: '/tinkoff-request/' /* base url for your project */,
+    baseUrl: '/request/' /* base url for your project */,
     // For github.io type URLs, you would set the url and baseUrl like:
     //   url: 'https://facebook.github.io',
     //   baseUrl: '/test-site/',
 
     // Used for publishing and more
-    projectName: 'tinkoff-request',
-    organizationName: 'Tinkoff',
+    projectName: 'request',
+    organizationName: 'tramvaijs',
     // For top-level user or org sites, the organization is still the same.
     // e.g., for the https://JoelMarcey.github.io site, it would be set like...
     //   organizationName: 'JoelMarcey'
@@ -30,7 +30,7 @@ const siteConfig = {
         { doc: 'how-to/index', label: 'How to' },
         { doc: 'plugins/index', label: 'Plugins' },
         { doc: 'core/index', label: 'Internals' },
-        { href: 'https://github.com/Tinkoff/tinkoff-request', label: 'GitHub' }
+        { href: 'https://github.com/tramvaijs/request', label: 'GitHub' }
     ],
 
     // If you have users set above, you add it here:
@@ -80,7 +80,7 @@ const siteConfig = {
         zIndex: 100
     },
     stylesheets: ['/css/custom.css'],
-    repoUrl: 'https://github.com/Tinkoff/tinkoff-request'
+    repoUrl: 'https://github.com/tramvaijs/request'
 };
 
 module.exports = siteConfig;
