@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.12.1](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-protocol-http@0.12.0...@tinkoff/request-plugin-protocol-http@0.12.1) (2024-01-17)
+
+
+### Bug Fixes
+
+* error readonly property reassign fix ([eac1226](https://github.com/Tinkoff/tinkoff-request/commit/eac122692e11232c09d7d85600d8cc111c0e7dce))
+
+
+
+
+
 # 0.12.0 (2023-12-06)
 
 
