@@ -260,13 +260,25 @@ export default ({
                         });
                     }
 
-                    next({
-                        status: Status.ERROR,
-                        error: Object.assign(err, {
+                    try {
+                        Object.assign(err, {
                             code: 'ERR_HTTP_ERROR',
                             status: response && response.status,
                             body: responseBody,
-                        }) as HttpRequestError,
+                        });
+                    } catch (e) {
+                        Object.assign(err, {
+                            __response: {
+                                code: 'ERR_HTTP_ERROR',
+                                status: response && response.status,
+                                body: responseBody,
+                            }
+                        });
+                    }
+
+                    next({
+                        status: Status.ERROR,
+                        error: err as HttpRequestError,
                         response: responseBody,
                     });
                 })
