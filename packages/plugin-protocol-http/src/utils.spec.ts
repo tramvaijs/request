@@ -3,8 +3,8 @@
  */
 import { MakeRequestResult } from '@tinkoff/request-core';
 import { Headers } from './fetch';
-import { PROTOCOL_HTTP } from './constants';
-import { abort, getHeader, getHeaders, getStatus } from './utils';
+import { CACHE, PROTOCOL_HTTP } from './constants';
+import { abort, getCacheFlags, getHeader, getHeaders, getStatus } from './utils';
 
 const headers = new Headers({
     a: 'aaa',
@@ -31,6 +31,9 @@ describe('plugins/http/utils', () => {
                     response,
                 };
             }),
+            getExternalMeta: jest.fn(() => {
+                return { memoryCache: false };
+            }),
         } as any;
     });
 
@@ -54,5 +57,9 @@ describe('plugins/http/utils', () => {
         expect(requestAbort).not.toHaveBeenCalled();
         abort(result);
         expect(requestAbort).toHaveBeenCalled();
+    });
+    it('get cache flags', () => {
+        expect(getCacheFlags(result)).toEqual({ memoryCache: false });
+        expect(result.getExternalMeta).toHaveBeenCalledWith(CACHE);
     });
 });

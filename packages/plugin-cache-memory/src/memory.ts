@@ -25,8 +25,13 @@ export interface MemoryPluginOptions {
     allowStale?: boolean;
     staleTtl?: number;
     staleBackgroundRequestTimeout?: number;
-    memoryConstructor?: (options: Options<string, Response>) => LRUCache<string, Response>;
+    memoryConstructor?: (options: Options<string, Response>) => LRUCache<string, StoredValue>;
     getCacheKey?: (arg) => string;
+}
+
+interface StoredValue {
+    response: Response
+    status: number
 }
 
 /**
@@ -63,7 +68,7 @@ export default ({
     memoryConstructor = (options: Options<string, Response>) => new (require('@tinkoff/lru-cache-nano'))(options),
     getCacheKey = undefined,
 }: MemoryPluginOptions = {}): Plugin => {
-    const lruCache: LRUCache<string, Response> = memoryConstructor({
+    const lruCache: LRUCache<string, StoredValue> = memoryConstructor({
         ...lruOptions,
         allowStale: true, // should be true for the opportunity to control it for individual requests
     });
@@ -80,9 +85,17 @@ export default ({
                     memoryCacheOutdated: false,
                 });
 
+                const cashedValue = lruCache.get(cacheKey)
+                // when plugin break flow, plugin-http won't be called and meta will be empty,
+                // so we need to enrich the meta with status data, as it is done in a normal flow
+                context.updateInternalMeta(metaTypes.PROTOCOL_HTTP, {
+                    response: {
+                        status: cashedValue.status
+                    }
+                });
                 return next({
                     status: Status.COMPLETE,
-                    response: lruCache.get(cacheKey),
+                    response: cashedValue.response,
                 });
             }
 
@@ -95,6 +108,11 @@ export default ({
                 context.updateExternalMeta(metaTypes.CACHE, {
                     memoryCache: true,
                     memoryCacheOutdated: true,
+                });
+                context.updateInternalMeta(metaTypes.PROTOCOL_HTTP, {
+                    response: {
+                        status: outdated.status
+                    }
                 });
 
                 lruCache.set(cacheKey, outdated, { ttl: staleTtl }); // remember outdated value, to prevent losing it
@@ -133,7 +151,13 @@ export default ({
             const cacheKey = getCacheKeyUtil(context, getCacheKey);
             const ttl: number = prop('memoryCacheTtl', context.getRequest());
 
-            lruCache.set(cacheKey, context.getResponse(), { ttl });
+            const httpMeta = context.getInternalMeta(metaTypes.PROTOCOL_HTTP)
+
+            const value = {
+                response: context.getResponse(),
+                status: httpMeta?.response?.status
+            }
+            lruCache.set(cacheKey, value, { ttl });
 
             context.updateExternalMeta(metaTypes.CACHE, {
                 memoryCacheBackground: prop('memoryCacheBackground', context.getRequest()),
