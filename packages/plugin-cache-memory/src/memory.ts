@@ -141,7 +141,7 @@ export default ({
 
                 return next({
                     status: Status.COMPLETE,
-                    response: outdated,
+                    response: outdated.response,
                 });
             }
 

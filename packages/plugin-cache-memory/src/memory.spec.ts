@@ -45,10 +45,10 @@ describe('plugins/cache/memory', () => {
     });
 
     it('init, value from cache', () => {
-        const response = { a: 1 };
+        const responseData = { response: {a: 1}, status: 200 };
 
         mockLru.has.mockImplementation(() => true);
-        mockLru.get.mockImplementation(() => response);
+        mockLru.get.mockImplementation(() => responseData);
         plugin.init(context, next, null);
 
         expect(mockLru.get).toHaveBeenCalledWith('test');
@@ -57,18 +57,18 @@ describe('plugins/cache/memory', () => {
             memoryCacheOutdated: false,
         });
         expect(next).toHaveBeenCalledWith({
-            response,
+            response: responseData.response,
             status: Status.COMPLETE,
         });
     });
 
     it('init, value from cache outdated, but allowStale is false', () => {
         const plugin = memoryCache({ allowStale: false });
-        const response = { a: 1 };
+        const responseData = { response: {a: 1}, status: 200 };
         const makeRequest: any = jest.fn(() => Promise.resolve());
 
         mockLru.has.mockImplementation(() => false);
-        mockLru.peek.mockImplementation(() => response);
+        mockLru.peek.mockImplementation(() => responseData);
         plugin.init(context, next, makeRequest);
 
         jest.runAllTimers();
@@ -80,36 +80,36 @@ describe('plugins/cache/memory', () => {
 
     it('init, value in cache is outdated and allowStale is true', () => {
         const plugin = memoryCache({ allowStale: true, staleTtl: 523 });
-        const response = { a: 1 };
+        const responseData = { response: {a: 1}, status: 200 };
         const makeRequest: any = jest.fn(() => Promise.resolve());
 
         mockLru.has.mockImplementation(() => false);
-        mockLru.peek.mockImplementation(() => response);
+        mockLru.peek.mockImplementation(() => responseData);
         plugin.init(context, next, makeRequest);
 
         jest.runAllTimers();
 
         expect(mockLru.get).not.toHaveBeenCalledWith('test');
-        expect(mockLru.set).toHaveBeenCalledWith('test', response, { ttl: 523 });
+        expect(mockLru.set).toHaveBeenCalledWith('test', responseData, { ttl: 523 });
         expect(makeRequest).toHaveBeenCalledWith({ url: 'test', memoryCacheForce: true, memoryCacheBackground: true });
         expect(context.updateExternalMeta).toHaveBeenCalledWith(metaTypes.CACHE, {
             memoryCache: true,
             memoryCacheOutdated: true,
         });
         expect(next).toHaveBeenCalledWith({
-            response,
+            response: responseData.response,
             status: Status.COMPLETE,
         });
     });
 
     it('init, value in cache is outdated and request memoryCacheAllowStale is true', () => {
         const plugin = memoryCache({ allowStale: false });
-        const response = { a: 1 };
+        const responseData = { response: {a: 1}, status: 200 };
         const makeRequest: any = jest.fn(() => Promise.resolve());
 
         context.setState({ request: { url: 'test', memoryCacheAllowStale: true } });
         mockLru.has.mockImplementation(() => false);
-        mockLru.peek.mockImplementation(() => response);
+        mockLru.peek.mockImplementation(() => responseData);
         plugin.init(context, next, makeRequest);
 
         jest.runAllTimers();
@@ -126,18 +126,18 @@ describe('plugins/cache/memory', () => {
             memoryCacheOutdated: true,
         });
         expect(next).toHaveBeenCalledWith({
-            response,
+            response: responseData.response,
             status: Status.COMPLETE,
         });
     });
 
     it('on complete saves to cache', () => {
-        const response = { a: 1 };
+        const responseData = { response: {a: 1}, status: 200 };
 
-        context.setState({ response, request: { url: 'test', memoryCacheTtl: 123 } });
+        context.setState({ response: responseData.response, request: { url: 'test', memoryCacheTtl: 123 } });
         plugin.complete(context, next, null);
 
         expect(next).toHaveBeenCalled();
-        expect(mockLru.set).toHaveBeenCalledWith('test', response, { ttl: 123 });
+        expect(mockLru.set).toHaveBeenCalledWith('test', responseData, { ttl: 123 });
     });
 });
