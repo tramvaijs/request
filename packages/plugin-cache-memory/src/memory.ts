@@ -85,7 +85,7 @@ export default ({
                     memoryCacheOutdated: false,
                 });
 
-                const cashedValue = lruCache.get(cacheKey)
+                const cashedValue = lruCache.get(cacheKey);
                 // when plugin break flow, plugin-http won't be called and meta will be empty,
                 // so we need to enrich the meta with status data, as it is done in a normal flow
                 context.updateInternalMeta(metaTypes.PROTOCOL_HTTP, {
@@ -151,12 +151,12 @@ export default ({
             const cacheKey = getCacheKeyUtil(context, getCacheKey);
             const ttl: number = prop('memoryCacheTtl', context.getRequest());
 
-            const httpMeta = context.getInternalMeta(metaTypes.PROTOCOL_HTTP)
+            const httpMeta = context.getInternalMeta(metaTypes.PROTOCOL_HTTP);
 
             const value = {
                 response: context.getResponse(),
                 status: httpMeta?.response?.status
-            }
+            };
             lruCache.set(cacheKey, value, { ttl });
 
             context.updateExternalMeta(metaTypes.CACHE, {
