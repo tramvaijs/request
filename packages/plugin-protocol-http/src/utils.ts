@@ -62,4 +62,4 @@ export const abort = (request: MakeRequestResult) => {
 
 export const getCacheFlags = (request: MakeRequestResult): Record<string, any> => {
     return request.getExternalMeta(CACHE)
-}
+};
