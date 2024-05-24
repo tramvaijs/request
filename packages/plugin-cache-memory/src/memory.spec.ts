@@ -23,6 +23,7 @@ const next = jest.fn();
 const context = new Context({ request: { url: 'test' } });
 
 context.updateExternalMeta = jest.fn(context.updateExternalMeta.bind(context));
+context.updateInternalMeta = jest.fn(context.updateInternalMeta.bind(context));
 
 describe('plugins/cache/memory', () => {
     beforeEach(() => {
@@ -55,6 +56,11 @@ describe('plugins/cache/memory', () => {
         expect(context.updateExternalMeta).toHaveBeenCalledWith(metaTypes.CACHE, {
             memoryCache: true,
             memoryCacheOutdated: false,
+        });
+        expect(context.updateInternalMeta).toHaveBeenCalledWith(metaTypes.PROTOCOL_HTTP, {
+            response: {
+                status: responseData.status
+            }
         });
         expect(next).toHaveBeenCalledWith({
             response: responseData.response,
