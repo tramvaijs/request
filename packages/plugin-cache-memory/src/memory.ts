@@ -31,7 +31,7 @@ export interface MemoryPluginOptions {
 
 interface StoredValue {
     response: Response
-    status: number
+    status?: number
 }
 
 /**
@@ -88,11 +88,13 @@ export default ({
                 const cashedValue = lruCache.get(cacheKey);
                 // when plugin break flow, plugin-http won't be called and meta will be empty,
                 // so we need to enrich the meta with status data, as it is done in a normal flow
-                context.updateInternalMeta(metaTypes.PROTOCOL_HTTP, {
-                    response: {
-                        status: cashedValue.status
-                    }
-                });
+                if (cashedValue.status) {
+                    context.updateInternalMeta(metaTypes.PROTOCOL_HTTP, {
+                        response: {
+                            status: cashedValue.status
+                        }
+                    });
+                }
                 return next({
                     status: Status.COMPLETE,
                     response: cashedValue.response,
@@ -109,11 +111,13 @@ export default ({
                     memoryCache: true,
                     memoryCacheOutdated: true,
                 });
-                context.updateInternalMeta(metaTypes.PROTOCOL_HTTP, {
-                    response: {
-                        status: outdated.status
-                    }
-                });
+                if (outdated.status) {
+                    context.updateInternalMeta(metaTypes.PROTOCOL_HTTP, {
+                        response: {
+                            status: outdated.status
+                        }
+                    });
+                }
 
                 lruCache.set(cacheKey, outdated, { ttl: staleTtl }); // remember outdated value, to prevent losing it
                 setTimeout(
@@ -151,12 +155,15 @@ export default ({
             const cacheKey = getCacheKeyUtil(context, getCacheKey);
             const ttl: number = prop('memoryCacheTtl', context.getRequest());
 
+            const value: StoredValue = {
+                response: context.getResponse(),
+            };
+
             const httpMeta = context.getInternalMeta(metaTypes.PROTOCOL_HTTP);
 
-            const value = {
-                response: context.getResponse(),
-                status: httpMeta?.response?.status
-            };
+            if (httpMeta?.response?.status) {
+                value.status = httpMeta.response.status
+            }
             lruCache.set(cacheKey, value, { ttl });
 
             context.updateExternalMeta(metaTypes.CACHE, {
