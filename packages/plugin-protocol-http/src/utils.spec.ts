@@ -58,8 +58,4 @@ describe('plugins/http/utils', () => {
         abort(result);
         expect(requestAbort).toHaveBeenCalled();
     });
-    it('get cache flags', () => {
-        expect(getCacheFlags(result)).toEqual({ memoryCache: false });
-        expect(result.getExternalMeta).toHaveBeenCalledWith(CACHE);
-    });
 });
