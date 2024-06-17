@@ -31,9 +31,6 @@ describe('plugins/http/utils', () => {
                     response,
                 };
             }),
-            getExternalMeta: jest.fn(() => {
-                return { memoryCache: false };
-            }),
         } as any;
     });
 
