@@ -3,8 +3,7 @@
  */
 import { MakeRequestResult } from '@tinkoff/request-core';
 import { Headers } from './fetch';
-import { CACHE, PROTOCOL_HTTP } from './constants';
-import { abort, getCacheFlags, getHeader, getHeaders, getStatus } from './utils';
+import { abort, getHeader, getHeaders, getStatus } from './utils';
 
 const headers = new Headers({
     a: 'aaa',
