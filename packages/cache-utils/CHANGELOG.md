@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.10.1](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-cache-utils@0.10.0...@tinkoff/request-cache-utils@0.10.1) (2024-06-18)
+
+
+### Bug Fixes
+
+* **plugin-cache-memory:** cache http status ([#4](https://github.com/Tinkoff/tinkoff-request/issues/4)) ([1377344](https://github.com/Tinkoff/tinkoff-request/commit/1377344242cf55e12565fc72f8f3518a8a46576d))
+
+
+
+
+
 # 0.10.0 (2023-12-06)
 
 
