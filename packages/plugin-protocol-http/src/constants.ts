@@ -1,5 +1,4 @@
 export const PROTOCOL_HTTP = 'PROTOCOL_HTTP';
-export const CACHE = 'cache';
 
 export const HttpMethods = {
     GET: 'GET',
