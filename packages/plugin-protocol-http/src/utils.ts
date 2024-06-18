@@ -1,6 +1,6 @@
 import { MakeRequestResult } from '@tinkoff/request-core';
 import prop from '@tinkoff/utils/object/prop';
-import { CACHE, PROTOCOL_HTTP } from './constants';
+import { PROTOCOL_HTTP } from './constants';
 
 const getSetCookieHeader = (headers) => {
     if (typeof window === 'undefined') {
@@ -58,8 +58,4 @@ export const abort = (request: MakeRequestResult) => {
     const meta = request.getInternalMeta(PROTOCOL_HTTP);
 
     return meta && meta.requestAbort();
-};
-
-export const getCacheFlags = (request: MakeRequestResult): Record<string, any> => {
-    return request.getExternalMeta(CACHE)
 };
