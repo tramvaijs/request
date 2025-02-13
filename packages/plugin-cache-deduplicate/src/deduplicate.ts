@@ -23,6 +23,8 @@ declare module '@tinkoff/request-core/lib/types.h' {
  */
 export default ({ shouldExecute = true, getCacheKey = undefined } = {}): Plugin => {
     const activeRequests = {};
+    const activeRequestsContext = {};
+    let initialRequestContext = null;
 
     const traverseActiveRequests = (context) => {
         const state = context.getState();
@@ -30,16 +32,27 @@ export default ({ shouldExecute = true, getCacheKey = undefined } = {}): Plugin 
 
         if (deduplicationKey && activeRequests[deduplicationKey]) {
             const arr = activeRequests[deduplicationKey];
+            const contextArr = activeRequestsContext[deduplicationKey];
+            const meta = initialRequestContext.getInternalMeta();
 
             delete activeRequests[deduplicationKey];
+            delete activeRequestsContext[deduplicationKey];
 
-            arr.forEach((next) => {
+            arr.forEach((next, index) => {
+                if (meta) {
+                    Object.keys(meta).forEach((key) => {
+                        contextArr[index].updateInternalMeta(key, meta[key]);
+                    });
+                }
+
                 next({
                     status: state.status,
                     response: state.response,
                     error: state.error,
                 });
             });
+
+            initialRequestContext = null;
         }
     };
 
@@ -53,10 +66,13 @@ export default ({ shouldExecute = true, getCacheKey = undefined } = {}): Plugin 
                     deduplicated: true,
                 });
                 activeRequests[deduplicationKey].push(next);
+                activeRequestsContext[deduplicationKey].push(context);
                 return;
             }
 
             activeRequests[deduplicationKey] = [];
+            activeRequestsContext[deduplicationKey] = [];
+            initialRequestContext = context;
             next();
         },
         complete: (context, next) => {

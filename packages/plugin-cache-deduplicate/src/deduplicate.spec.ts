@@ -28,9 +28,11 @@ describe('plugins/cache/deduplicate', () => {
         const plugin = deduplicate({ shouldExecute: true, getCacheKey: deduplicateFunc });
         const next = jest.fn();
         const response = { test: 123 };
+        const contexts: Context[] = [];
 
         requests.forEach((request, index) => {
             const context = new Context({ request });
+            contexts.push(context);
 
             context.updateExternalMeta = jest.fn(context.updateExternalMeta.bind(context));
             context.updateInternalMeta = jest.fn(context.updateInternalMeta.bind(context));
@@ -40,12 +42,17 @@ describe('plugins/cache/deduplicate', () => {
             if (request.url === 'first' && index !== 0) {
                 expect(context.updateExternalMeta).toHaveBeenCalledWith(metaTypes.CACHE, { deduplicated: true });
             }
+            
+            if (request.url === 'first' && index === 0 || request.url === 'third') {
+                context.updateInternalMeta(metaTypes.PROTOCOL_HTTP, { status: 204 });
+            }
         });
         expect(next).toHaveBeenCalledTimes(2);
         plugin.complete(new Context({ response, request: requests[0], status: Status.COMPLETE }), next, null);
         expect(next).toHaveBeenCalledTimes(5); // 4 requests init + 1 complete
-        requests.forEach((request) => {
+        requests.forEach((request, index) => {
             expect(next).toHaveBeenCalledWith({ response, status: Status.COMPLETE, error: null });
+            expect(contexts[index].updateInternalMeta).toHaveBeenCalledWith(metaTypes.PROTOCOL_HTTP, { status: 204 });
         });
     });
 
@@ -53,9 +60,13 @@ describe('plugins/cache/deduplicate', () => {
         const plugin = deduplicate({ shouldExecute: true, getCacheKey: deduplicateFunc });
         const next = jest.fn();
         const error = new Error('text');
+        const contexts: Context[] = [];
 
         requests.forEach((request, index) => {
             const context = new Context({ request });
+            contexts.push(context);
+
+            context.updateInternalMeta('HTTP', { status: 503 });
 
             context.updateExternalMeta = jest.fn(context.updateExternalMeta.bind(context));
             context.updateInternalMeta = jest.fn(context.updateInternalMeta.bind(context));
@@ -65,12 +76,17 @@ describe('plugins/cache/deduplicate', () => {
             if (request.url === 'first' && index !== 0) {
                 expect(context.updateExternalMeta).toHaveBeenCalledWith(metaTypes.CACHE, { deduplicated: true });
             }
+            
+            if (request.url === 'first' && index === 0 || request.url === 'third') {
+                context.updateInternalMeta(metaTypes.PROTOCOL_HTTP, { status: 204 });
+            }
         });
         expect(next).toHaveBeenCalledTimes(2);
         plugin.error(new Context({ error, request: requests[0], status: Status.ERROR }), next, null);
         expect(next).toHaveBeenCalledTimes(5); // 4 requests init + 1 complete
-        requests.forEach((request) => {
+        requests.forEach((request, index) => {
             expect(next).toHaveBeenCalledWith({ error, status: Status.ERROR, response: null });
+            expect(contexts[index].updateInternalMeta).toHaveBeenCalledWith(metaTypes.PROTOCOL_HTTP, { status: 204 });
         });
     });
 });
