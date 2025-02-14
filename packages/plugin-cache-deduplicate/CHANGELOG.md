@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.10.3](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-cache-deduplicate@0.10.2...@tinkoff/request-plugin-cache-deduplicate@0.10.3) (2025-02-14)
+
+
+### Bug Fixes
+
+* **deduplicate:** support concurrent requests ([2d31e4f](https://github.com/Tinkoff/tinkoff-request/commit/2d31e4f0b555a108f0e27f0254940ba7ac953467))
+
+
+
+
+
 ## [0.10.2](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-cache-deduplicate@0.10.1...@tinkoff/request-plugin-cache-deduplicate@0.10.2) (2025-02-13)
 
 
