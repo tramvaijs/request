@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.13.0](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-protocol-http@0.12.1...@tinkoff/request-plugin-protocol-http@0.13.0) (2025-04-04)
+
+
+### Features
+
+* Export HTTP error classes from `@tinkoff/request-plugin-protocol-http` ([a8c8ea9](https://github.com/Tinkoff/tinkoff-request/commit/a8c8ea9b7ef0e8f5dc025f2fcba55d58c3ea4719))
+
+
+
+
+
 ## [0.12.1](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-protocol-http@0.12.0...@tinkoff/request-plugin-protocol-http@0.12.1) (2024-01-17)
 
 
