@@ -30,7 +30,7 @@
   "devDependencies": {
     "@tinkoff/request-core": "^0.10.0",
     "@tinkoff/request-plugin-protocol-http": "^0.13.0",
-    "@types/node": "^10.11.7"
+    "@types/node": "^18.0.0"
   },
   "peerDependencies": {
     "@tinkoff/request-core": "0.x",
