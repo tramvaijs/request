@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.10.4](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-cache-persistent@0.10.3...@tinkoff/request-plugin-cache-persistent@0.10.4) (2025-09-02)
+
+
+### Reverts
+
+* Revert "feat!: remove node-fetch" ([0bf1f38](https://github.com/Tinkoff/tinkoff-request/commit/0bf1f38b55ed39ec3543c66c2df2d657e53df919))
+
+
+
+
+
 ## [0.10.3](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-cache-persistent@0.10.2...@tinkoff/request-plugin-cache-persistent@0.10.3) (2025-09-02)
 
 **Note:** Version bump only for package @tinkoff/request-plugin-cache-persistent

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.13.2](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-protocol-http@0.13.1...@tinkoff/request-plugin-protocol-http@0.13.2) (2025-09-02)
+
+
+### Reverts
+
+* Revert "feat!: remove node-fetch" ([0bf1f38](https://github.com/Tinkoff/tinkoff-request/commit/0bf1f38b55ed39ec3543c66c2df2d657e53df919))
+
+
+
+
+
 ## [0.13.1](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-protocol-http@0.13.0...@tinkoff/request-plugin-protocol-http@0.13.1) (2025-09-02)
 
 **Note:** Version bump only for package @tinkoff/request-plugin-protocol-http

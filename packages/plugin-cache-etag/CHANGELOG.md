@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.6](https://github.com/tramvaijs/request/compare/@tinkoff/request-plugin-cache-etag@0.4.5...@tinkoff/request-plugin-cache-etag@0.4.6) (2025-09-02)
+
+
+### Reverts
+
+* Revert "feat!: remove node-fetch" ([0bf1f38](https://github.com/tramvaijs/request/commit/0bf1f38b55ed39ec3543c66c2df2d657e53df919))
+
+
+
+
+
 ## [0.4.5](https://github.com/tramvaijs/request/compare/@tinkoff/request-plugin-cache-etag@0.4.4...@tinkoff/request-plugin-cache-etag@0.4.5) (2025-09-02)
 
 **Note:** Version bump only for package @tinkoff/request-plugin-cache-etag
