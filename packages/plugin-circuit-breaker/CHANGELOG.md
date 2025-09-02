@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.1](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-circuit-breaker@0.4.0...@tinkoff/request-plugin-circuit-breaker@0.4.1) (2025-09-02)
+
+**Note:** Version bump only for package @tinkoff/request-plugin-circuit-breaker
+
+
+
+
+
 # 0.4.0 (2023-12-06)
 
 

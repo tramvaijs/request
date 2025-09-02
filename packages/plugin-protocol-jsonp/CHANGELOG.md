@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.1](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-protocol-jsonp@0.3.0...@tinkoff/request-plugin-protocol-jsonp@0.3.1) (2025-09-02)
+
+**Note:** Version bump only for package @tinkoff/request-plugin-protocol-jsonp
+
+
+
+
+
 # 0.3.0 (2023-12-06)
 
 

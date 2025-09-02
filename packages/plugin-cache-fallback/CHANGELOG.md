@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.11.3](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-cache-fallback@0.11.2...@tinkoff/request-plugin-cache-fallback@0.11.3) (2025-09-02)
+
+**Note:** Version bump only for package @tinkoff/request-plugin-cache-fallback
+
+
+
+
+
 ## [0.11.2](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-cache-fallback@0.11.1...@tinkoff/request-plugin-cache-fallback@0.11.2) (2025-02-13)
 
 **Note:** Version bump only for package @tinkoff/request-plugin-cache-fallback
