@@ -1,11 +1,6 @@
 module.exports = {
-    fakeTimers: {
-        enableGlobally: true,
-        legacyFakeTimers: true
-    },
-    testEnvironmentOptions: {
-        url: 'http://localhost/'
-    },
+    timers: 'legacy',
+    testURL: 'http://localhost/',
     transform: {
         '^.+\\.ts$': 'ts-jest',
         '^.+\\.js$': 'babel-jest',

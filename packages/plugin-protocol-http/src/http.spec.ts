@@ -1,38 +1,48 @@
+/**
+ * @jest-environment jsdom
+ */
+import { FetchMock } from 'jest-fetch-mock';
 import { Context, Status } from '@tinkoff/request-core';
 import http from './http';
 
-const fetch = jest.spyOn(globalThis, 'fetch');
+const fetch: FetchMock = require('jest-fetch-mock');
+jest.mock(
+    'node-fetch',
+    () =>
+        (...args) =>
+            fetch(...args)
+);
+
 const plugin = http();
 const next = jest.fn();
 
-const createResponse = (body: Record<string, any>, init: ResponseInit = {}): Promise<Response> => {
-    return Promise.resolve(
-        new Response(JSON.stringify(body), {
-            status: 200,
-            ...init,
-        })
-    );
-};
-
 describe('plugins/http', () => {
     beforeEach(() => {
-        (fetch as any).mockReset();
+        fetch.resetMocks();
         next.mockClear();
     });
 
     it('request get', async () => {
-        const body = { a: 3 };
-        const mockResponse = createResponse(body, {
-            headers: { 'content-type': 'application/json' },
-        });
+        const response = { a: 3 };
+        const mockResponse = jest.fn(() =>
+            Promise.resolve({
+                body: JSON.stringify(response),
+                init: {
+                    headers: {
+                        'Content-type': 'application/json;',
+                    },
+                },
+            })
+        );
 
-        (fetch as any).mockReturnValueOnce(mockResponse);
+        fetch.mockResponse(mockResponse);
 
         plugin.init!(new Context({ request: { url: 'test' } }), next, null as any);
 
         jest.runAllTimers();
 
-        expect(fetch as any).toHaveBeenCalledWith('http://test', {
+        expect(mockResponse).toBeCalled();
+        expect(fetch).toHaveBeenCalledWith('test', {
             method: 'GET',
             credentials: 'same-origin',
             headers: {
@@ -46,13 +56,13 @@ describe('plugins/http', () => {
         });
 
         expect(next).toHaveBeenLastCalledWith({
-            response: body,
+            response,
             status: Status.COMPLETE,
         });
     });
 
     it('request attaches', async () => {
-        const mockResponse = createResponse({ body: '' });
+        const mockResponse = jest.fn(() => Promise.resolve({ body: '' }));
         const payload = {
             key: 'value',
         };
@@ -67,7 +77,7 @@ describe('plugins/http', () => {
             }),
         ];
 
-        (fetch as any).mockReturnValue(mockResponse);
+        fetch.mockResponse(mockResponse);
 
         plugin.init!(
             new Context({
@@ -98,17 +108,25 @@ describe('plugins/http', () => {
         await new Promise((res) => {
             next.mockImplementation(res);
         });
+
+        expect(mockResponse).toBeCalled();
     });
 
     it('error request', async () => {
-        const body = { a: '1', b: 2 };
-        const mockResponse = createResponse(body, {
-            status: 503,
-            headers: {
-                'Content-type': 'application/json;',
-            },
-        });
-        (fetch as any).mockReturnValueOnce(mockResponse);
+        const response = { a: '1', b: 2 };
+        const mockResponse = jest.fn(() =>
+            Promise.resolve({
+                init: {
+                    status: 503,
+                    headers: {
+                        'Content-type': 'application/json;',
+                    },
+                },
+                body: JSON.stringify(response),
+            })
+        );
+
+        fetch.mockResponse(mockResponse);
 
         plugin.init!(new Context({ request: { url: 'test' } }), next, null as any);
 
@@ -116,22 +134,23 @@ describe('plugins/http', () => {
             next.mockImplementation(res);
         });
 
-        expect(next).toHaveBeenCalledWith({
+        expect(mockResponse).toBeCalled();
+        expect(next).toHaveBeenLastCalledWith({
             status: Status.ERROR,
             error: expect.objectContaining({
                 code: 'ERR_HTTP_ERROR',
-                message: 'Unsuccessful HTTP response',
+                message: 'Service Unavailable',
                 status: 503,
-                body,
+                body: response,
             }),
-            response: body,
+            response,
         });
     });
 
     it('request unknown error', async () => {
-        const mockResponse = Promise.reject(new TypeError('Failed to (fetch as any)'));
+        const mockResponse = jest.fn(() => Promise.reject(new TypeError('Failed to fetch')));
 
-        (fetch as any).mockReturnValueOnce(mockResponse);
+        fetch.mockResponse(mockResponse);
 
         plugin.init!(new Context({ request: { url: 'test' } }), next, null as any);
 
@@ -139,20 +158,27 @@ describe('plugins/http', () => {
             next.mockImplementation(res);
         });
 
+        expect(mockResponse).toBeCalled();
         expect(next).toHaveBeenLastCalledWith({
             status: Status.ERROR,
-            error: new TypeError('Failed to (fetch as any)'),
+            error: new TypeError('Failed to fetch'),
         });
     });
 
     it('request with custom agent', async () => {
-        const body = { a: 3 };
-        const mockResponse = createResponse(body, {
-            headers: {
-                'Content-type': 'application/json;',
-            },
-        });
-        (fetch as any).mockReturnValueOnce(mockResponse);
+        const response = { a: 3 };
+        const mockResponse = jest.fn(() =>
+            Promise.resolve({
+                body: JSON.stringify(response),
+                init: {
+                    headers: {
+                        'Content-type': 'application/json;',
+                    },
+                },
+            })
+        );
+
+        fetch.mockResponse(mockResponse);
 
         class MockedAgent {
             requests() {}
@@ -169,20 +195,27 @@ describe('plugins/http', () => {
             next.mockImplementation(res);
         });
 
+        expect(mockResponse).toBeCalled();
         expect(next).toHaveBeenLastCalledWith({
-            response: body,
+            response,
             status: Status.COMPLETE,
         });
     });
 
     it('request with custom querySerializer', async () => {
-        const body = { a: 3 };
-        const mockResponse = createResponse(body, {
-            headers: {
-                'Content-type': 'application/json;',
-            },
-        });
-        (fetch as any).mockReturnValueOnce(mockResponse);
+        const response = { a: 3 };
+        const mockResponse = jest.fn(() =>
+            Promise.resolve({
+                body: JSON.stringify(response),
+                init: {
+                    headers: {
+                        'Content-type': 'application/json;',
+                    },
+                },
+            })
+        );
+
+        fetch.mockResponse(mockResponse);
 
         const mockQuerySerializer = jest.fn(() => 'query-string');
 
@@ -196,15 +229,17 @@ describe('plugins/http', () => {
             next.mockImplementation(res);
         });
 
+        expect(mockResponse).toBeCalled();
+
         expect(mockQuerySerializer).toHaveBeenCalledWith({ a: '1' }, 'test=123');
     });
 
     it('plugin should call next function once after aborting', async () => {
-        const body = { a: 3 };
-        const mockResponse = createResponse(body);
+        const response = { a: 3 };
+        const mockResponse = jest.fn(() => Promise.resolve({ body: JSON.stringify(response) }));
         let abort;
 
-        (fetch as any).mockReturnValueOnce(mockResponse);
+        fetch.mockResponse(mockResponse);
 
         plugin.init!(
             new Context({
@@ -236,10 +271,10 @@ describe('plugins/http', () => {
     });
 
     it('plugin should accept signal that can abort request', async () => {
-        const body = { a: 3 };
-        const mockResponse = createResponse(body);
+        const response = { a: 3 };
+        const mockResponse = jest.fn(() => Promise.resolve({ body: JSON.stringify(response) }));
 
-        (fetch as any).mockReturnValueOnce(mockResponse);
+        fetch.mockResponse(mockResponse);
 
         const abortController = new AbortController();
 
@@ -271,15 +306,20 @@ describe('plugins/http', () => {
     });
 
     it('abort should do nothing after request ended', async () => {
-        const body = { a: 3 };
-        const mockResponse = createResponse(body, {
-            headers: {
-                'Content-type': 'application/json;',
-            },
-        });
+        const response = { a: 3 };
+        const mockResponse = jest.fn(() =>
+            Promise.resolve({
+                body: JSON.stringify(response),
+                init: {
+                    headers: {
+                        'Content-type': 'application/json;',
+                    },
+                },
+            })
+        );
         let abort;
 
-        (fetch as any).mockReturnValueOnce(mockResponse);
+        fetch.mockResponse(mockResponse);
 
         plugin.init!(
             new Context({
@@ -302,26 +342,32 @@ describe('plugins/http', () => {
 
         expect(next).toHaveBeenCalledTimes(1);
         expect(next).toHaveBeenLastCalledWith({
-            response: body,
+            response,
             status: Status.COMPLETE,
         });
     });
 
     it('should convert httpMethod to uppercase', async () => {
-        const body = { a: 3 };
-        const mockResponse = createResponse(body, {
-            headers: {
-                'Content-type': 'application/json;',
-            },
-        });
+        const response = { a: 3 };
+        const mockResponse = jest.fn(() =>
+            Promise.resolve({
+                body: JSON.stringify(response),
+                init: {
+                    headers: {
+                        'Content-type': 'application/json;',
+                    },
+                },
+            })
+        );
 
-        (fetch as any).mockReturnValueOnce(mockResponse);
+        fetch.mockResponse(mockResponse);
 
         plugin.init!(new Context({ request: { url: 'method-patch', httpMethod: 'patch' } }), next, null as any);
 
         jest.runAllTimers();
 
-        expect(fetch as any).toHaveBeenCalledWith('http://method-patch', {
+        expect(mockResponse).toBeCalled();
+        expect(fetch).toHaveBeenCalledWith('method-patch', {
             method: 'PATCH',
             credentials: 'same-origin',
             body: '',
@@ -336,28 +382,28 @@ describe('plugins/http', () => {
         });
 
         expect(next).toHaveBeenLastCalledWith({
-            response: body,
+            response,
             status: Status.COMPLETE,
         });
     });
 
-    it.only('timeout', async () => {
-        const body = { a: 1 };
-        const mockResponse = new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(
-                    new Response(JSON.stringify(body), {
-                        status: 200,
-                    })
-                );
-            }, 2000);
+    it('timeout', async () => {
+        const response = { a: 1 };
+        const mockResponse = jest.fn(() => {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve(response);
+                }, 2000);
+            });
         });
 
-        (fetch as any).mockReturnValueOnce(mockResponse as any);
+        fetch.mockResponse(mockResponse as any);
 
         plugin.init!(new Context({ request: { url: 'timeout', timeout: 500 } }), next, null as any);
 
         jest.runAllTimers();
+
+        expect(mockResponse).toBeCalled();
 
         expect(next).toHaveBeenLastCalledWith({
             error: expect.objectContaining({
@@ -369,13 +415,15 @@ describe('plugins/http', () => {
     });
 
     it('internal timeout', async () => {
-        const mockResponse = Promise.reject(
-            Object.assign(new Error('network timeout at: timeout'), {
-                type: 'request-timeout',
-            })
-        );
+        const mockResponse = jest.fn(() => {
+            return Promise.reject(
+                Object.assign(new Error('network timeout at: timeout'), {
+                    type: 'request-timeout',
+                })
+            );
+        });
 
-        (fetch as any).mockReturnValueOnce(mockResponse);
+        fetch.mockResponse(mockResponse);
 
         plugin.init!(new Context({ request: { url: 'timeout' } }), next, null as any);
 
@@ -384,6 +432,8 @@ describe('plugins/http', () => {
         await new Promise((res) => {
             next.mockImplementation(res);
         });
+
+        expect(mockResponse).toBeCalled();
 
         expect(next).toHaveBeenLastCalledWith({
             error: expect.objectContaining({

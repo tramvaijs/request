@@ -1,9 +1,3 @@
-import type { RequestInit, RequestInfo, fetch as undiciFetch } from "undici";
+import fetch, { Headers, Request, Response } from 'node-fetch';
 
-const fetch = (input: RequestInfo, init?: RequestInit) => {
-    return (<typeof undiciFetch>globalThis.fetch)(input, init);
-};
-
-const { Headers, Request, Response } = globalThis;
-
-export { fetch, Headers, Request, Response };
+export { fetch, Headers, Response, Request };

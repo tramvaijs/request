@@ -5,7 +5,7 @@ sidebar_label: Protocol - Http
 ---
 
 Makes http/https request.
-Uses native nodejs fetch.
+Uses `node-fetch` library.
 
 !!! Plugin requires `fetch` polyfill for browsers without support.
 

@@ -13,7 +13,8 @@
         "importHelpers": true,
         "noUnusedLocals": true,
         "lib": [
-            "es2020",
+            "es2015",
+            "es5",
             "dom"
         ],
         "target": "ES2015"
