@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import { MakeRequestResult } from '@tinkoff/request-core';
 import { Headers } from './fetch';
 import { PROTOCOL_HTTP } from './constants';
@@ -32,7 +35,7 @@ describe('plugins/http/utils', () => {
     });
 
     it('get headers', () => {
-        expect(getHeaders(result)).toEqual({ a: 'aaa', b: 'bbb', 'set-cookie': 'cookie1, cookie2' });
+        expect(getHeaders(result)).toEqual({ a: 'aaa', b: 'bbb', 'set-cookie': ['cookie1', 'cookie2'] });
         expect(result.getInternalMeta).toHaveBeenCalledWith(PROTOCOL_HTTP);
     });
 
@@ -40,7 +43,7 @@ describe('plugins/http/utils', () => {
         expect(getHeader(result, 'a')).toBe('aaa');
         expect(getHeader(result, 'b')).toBe('bbb');
         expect(getHeader(result, 'c')).toBeNull();
-        expect(getHeader(result, 'set-cookie')).toEqual('cookie1, cookie2');
+        expect(getHeader(result, 'set-cookie')).toEqual(['cookie1', 'cookie2']);
     });
 
     it('get status', () => {
