@@ -1,7 +1,3 @@
-/**
- * @jest-environment node
- */
-
 import { addQuery, normalizeUrl, serializeQuery } from './url';
 
 describe('plugins/http/url', () => {

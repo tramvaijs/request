@@ -1,6 +1,3 @@
-import { Agent } from 'https';
-import AbortController from 'abort-controller';
-
 import propOr from '@tinkoff/utils/object/propOr';
 import { Plugin, Status } from '@tinkoff/request-core';
 import { Query, QuerySerializer } from '@tinkoff/request-url-utils';
@@ -12,6 +9,7 @@ import { PROTOCOL_HTTP, REQUEST_TYPES, HttpMethods } from './constants';
 import parse from './parse';
 import createForm from './form';
 import { TimeoutError, AbortError, HttpRequestError } from './errors';
+import type { Agent } from 'undici/types';
 
 declare module '@tinkoff/request-core/lib/types.h' {
     export interface Request {
@@ -54,7 +52,6 @@ const isBrowser = typeof window !== 'undefined';
 
 /**
  * Makes http/https request.
- * Uses `node-fetch` library.
  *
  * requestParams:
  *      httpMethod {string} [='get']
@@ -70,7 +67,7 @@ const isBrowser = typeof window !== 'undefined';
  *      abortPromise {Promise}
  *      signal {AbortSignal}
  *
- * @param {agent} [agent = Agent] set custom http in node js. The browser ignores this parameter.
+ * @param {agent} [agent = Agent] set custom agent for fetch in node js. The browser ignores this parameter.
  * @param {QuerySerializer} querySerializer function that will be used instead of default value to serialize query strings in url
  * @return {{init: init}}
  */
@@ -81,13 +78,17 @@ export default ({
     agent?: { http: Agent; https: Agent };
     querySerializer?: QuerySerializer;
 } = {}): Plugin => {
-    let customAgent;
+    let customAgent: (url: string) => undefined | Agent = () => undefined;
 
     if (!isBrowser && agent) {
-        customAgent = (parsedUrl) => {
-            if (parsedUrl.protocol === 'http:') {
-                return agent.http;
-            }
+        customAgent = (url) => {
+            try {
+                const parsedUrl = new URL(url);
+
+                if (parsedUrl.protocol === 'http:') {
+                    return agent.http;
+                }
+            } catch (_err) {}
 
             return agent.https;
         };
@@ -135,91 +136,74 @@ export default ({
             }
 
             let timer;
-            let signal;
 
-            if (AbortController) {
-                const controller = new AbortController();
-                signal = controller.signal;
+            const controller = new AbortController();
+            const signal = controller.signal;
 
-                const abort = (abortOptions?) => {
-                    if (ended) {
-                        return;
-                    }
-
-                    ended = true;
-                    controller.abort();
-
-                    next({
-                        status: Status.ERROR,
-                        error:
-                            abortOptions instanceof Error
-                                ? abortOptions
-                                : Object.assign(new AbortError(), {
-                                      abortOptions: abortOptions || {},
-                                  }),
-                    });
-                };
-
-                if (abortPromise) {
-                    abortPromise.then(abort);
+            const abort = (abortOptions?) => {
+                if (ended) {
+                    return;
                 }
 
-                if (timeout) {
-                    timer = setTimeout(() => {
-                        abort(new TimeoutError());
-                    }, timeout);
-                }
+                ended = true;
+                controller.abort();
 
-                context.updateInternalMeta(PROTOCOL_HTTP, {
-                    requestAbort: abort,
+                next({
+                    status: Status.ERROR,
+                    error:
+                        abortOptions instanceof Error
+                            ? abortOptions
+                            : Object.assign(new AbortError(), {
+                                  abortOptions: abortOptions || {},
+                              }),
                 });
+            };
 
-                if (argSignal) {
-                    if (argSignal.aborted) {
+            if (abortPromise) {
+                abortPromise.then(abort);
+            }
+
+            if (timeout) {
+                timer = setTimeout(() => {
+                    abort(new TimeoutError());
+                }, timeout);
+            }
+
+            context.updateInternalMeta(PROTOCOL_HTTP, {
+                requestAbort: abort,
+            });
+
+            if (argSignal) {
+                if (argSignal.aborted) {
+                    abort();
+                } else {
+                    argSignal.addEventListener('abort', () => {
                         abort();
-                    } else {
-                        argSignal.addEventListener('abort', () => {
-                            abort();
-                        });
-                    }
-                }
-            } else {
-                if (timeout) {
-                    timer = setTimeout(() => {
-                        next({
-                            status: Status.ERROR,
-                            error: new TimeoutError(),
-                        });
-
-                        ended = true;
-                    }, timeout);
+                    });
                 }
             }
 
-            let response: Response;
+            let response;
             let responseBody;
-
-            fetch(
-                addQuery(
-                    normalizeUrl(url),
-                    {
-                        ...(noBody ? payload : {}),
-                        ...queryNoCache,
-                        ...query,
-                    },
-                    querySerializer
-                ),
+            const normalizedUrl = addQuery(
+                normalizeUrl(url),
                 {
-                    signal,
-                    method,
-                    headers: { ...formHeaders, ...headers },
-                    agent: customAgent,
-                    credentials: credentials ?? (withCredentials ? 'include' : 'same-origin'),
-                    body,
-                    timeout,
-                }
-            )
-                .then((resp: Response) => {
+                    ...(noBody ? payload : {}),
+                    ...queryNoCache,
+                    ...query,
+                },
+                querySerializer
+            );
+
+            fetch(normalizedUrl, {
+                signal,
+                method,
+                headers: { ...formHeaders, ...headers },
+                dispatcher: customAgent(normalizedUrl),
+                credentials: credentials ?? (withCredentials ? 'include' : 'same-origin'),
+                body,
+            })
+                .then((resp) => {
                     response = resp;
 
                     context.updateInternalMeta(PROTOCOL_HTTP, {
@@ -240,7 +224,7 @@ export default ({
                     responseBody = body;
 
                     if (!response.ok) {
-                        throw new Error(response.statusText);
+                        throw new Error(response.statusText || 'Unsuccessful HTTP response');
                     }
 
                     next({
@@ -272,7 +256,7 @@ export default ({
                                 code: 'ERR_HTTP_ERROR',
                                 status: response && response.status,
                                 body: responseBody,
-                            }
+                            },
                         });
                     }
 

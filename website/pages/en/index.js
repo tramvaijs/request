@@ -128,7 +128,6 @@ const TldrSection = props => (
                     <h2>Based on</h2>
                     <ul style={{ flex: '1' }}>
                         <li>lru-cache</li>
-                        <li>node-fetch</li>
                         <li>idb-keyvalue</li>
                     </ul>
                 </div>
