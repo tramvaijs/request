@@ -90,7 +90,7 @@ export default ({
 
             if (etag) {
                 lruCache.set(cacheKey, {
-                    key: etag,
+                    key: <string>etag,
                     value: context.getResponse(),
                 });
             }

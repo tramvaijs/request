@@ -2,9 +2,9 @@ import { MakeRequestResult } from '@tinkoff/request-core';
 import prop from '@tinkoff/utils/object/prop';
 import { PROTOCOL_HTTP } from './constants';
 
-const getSetCookieHeader = (headers) => {
+const getSetCookieHeader = (headers: Headers) => {
     if (typeof window === 'undefined') {
-        return headers.raw()['set-cookie']; // node-fetch specific api, see https://github.com/bitinn/node-fetch#extract-set-cookie-header
+        return headers.get('set-cookie');
     }
 
     return []; // browser doesn't provide set-cookie header, just return empty array for compatibility
