@@ -1,6 +1,6 @@
 {
   "name": "@tinkoff/request-plugin-cache-persistent",
-  "version": "0.10.4",
+  "version": "0.11.0",
   "description": "Stores responses in IndexedDB to preserve data in browser",
   "main": "lib/persistent.js",
   "typings": "lib/persistent.d.ts",

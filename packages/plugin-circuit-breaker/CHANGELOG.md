@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-circuit-breaker@0.4.2...@tinkoff/request-plugin-circuit-breaker@0.5.0) (2025-09-19)
+
+
+* feat!: remove node fetch ([7a10dd4](https://github.com/Tinkoff/tinkoff-request/commit/7a10dd49cf763b68ca78009fdbac8a75f65f5b0f))
+
+
+### BREAKING CHANGES
+
+* remove node-fetch, migrate on native undici
+
+
+
+
+
 ## [0.4.2](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-circuit-breaker@0.4.1...@tinkoff/request-plugin-circuit-breaker@0.4.2) (2025-09-02)
 
 

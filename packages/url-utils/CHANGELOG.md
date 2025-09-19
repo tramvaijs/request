@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-url-utils@0.10.2...@tinkoff/request-url-utils@0.11.0) (2025-09-19)
+
+
+* feat!: remove node fetch ([7a10dd4](https://github.com/Tinkoff/tinkoff-request/commit/7a10dd49cf763b68ca78009fdbac8a75f65f5b0f))
+
+
+### BREAKING CHANGES
+
+* remove node-fetch, migrate on native undici
+
+
+
+
+
 ## [0.10.2](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-url-utils@0.10.1...@tinkoff/request-url-utils@0.10.2) (2025-09-02)
 
 
