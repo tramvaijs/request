@@ -1,7 +1,7 @@
-import type { RequestInit, RequestInfo, fetch as undiciFetch } from "undici";
+import { RequestInit, RequestInfo, fetch as undiciFetch } from 'undici';
 
 const fetch = (input: RequestInfo, init?: RequestInit) => {
-    return (<typeof undiciFetch>globalThis.fetch)(input, init);
+    return undiciFetch(input, init);
 };
 
 const { Headers, Request, Response } = globalThis;

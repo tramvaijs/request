@@ -37,10 +37,11 @@
   },
   "devDependencies": {
     "@types/node": "^18.0.0",
-    "undici": "^5.0.0"
+    "undici": "^7.16.0"
   },
   "peerDependencies": {
-    "@tinkoff/request-core": "0.x"
+    "@tinkoff/request-core": "0.x",
+    "undici": ">=6"
   },
   "module": "lib/index.es.js"
 }
