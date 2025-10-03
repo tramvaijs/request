@@ -43,6 +43,30 @@ Documentation links:
 
 [Agent parameters](https://undici.nodejs.org/#/docs/api/Client?id=parameter-clientoptions).
 
+### Headers interface
+
+Previously, node-fetch shipped with a [custom implementation](https://github.com/node-fetch/node-fetch/blob/v2.7.0/src/headers.js) of the `Headers` interface, which included several non-standard, spec-incompatible methods.
+
+These methods are no longer supported, as the library now relies on the native `Headers` interface.
+
+### Headers with the same name
+
+The behavior for combining multiple headers with the same name has changed.
+
+`node-fetch` returned an array of values.
+
+The native Headers interface returns a single string, with values joined by `, `.
+
+As a result, header values are always of type `string` now.
+
+### Undici version
+
+The library now explicitly uses fetch from undici.
+
+undici has been moved to `peerDependencies`, so you must install it yourself when using `tinkoff/request`.
+
+Choose an undici version compatible with your Node.js runtime (check `engine` field in package.json of required undici version).
+
 ### Jest
 
 In jest-environment-jsdom there is no fetch. Use jsdom patching with undici’s fetch, as it is the most spec-compatible:
