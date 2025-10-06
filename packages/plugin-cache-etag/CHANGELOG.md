@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.1](https://github.com/tramvaijs/request/compare/@tinkoff/request-plugin-cache-etag@0.5.0...@tinkoff/request-plugin-cache-etag@0.5.1) (2025-10-06)
+
+**Note:** Version bump only for package @tinkoff/request-plugin-cache-etag
+
+
+
+
+
 # [0.5.0](https://github.com/tramvaijs/request/compare/@tinkoff/request-plugin-cache-etag@0.4.6...@tinkoff/request-plugin-cache-etag@0.5.0) (2025-09-19)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.15.0](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-protocol-http@0.14.0...@tinkoff/request-plugin-protocol-http@0.15.0) (2025-10-06)
+
+
+### Features
+
+* explicit use of undici fetch ([1dfccca](https://github.com/Tinkoff/tinkoff-request/commit/1dfccca8d623a85f7d018cb55c6ab19d2829c403))
+
+
+
+
+
 # [0.14.0](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-protocol-http@0.13.2...@tinkoff/request-plugin-protocol-http@0.14.0) (2025-09-19)
 
 
