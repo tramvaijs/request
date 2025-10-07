@@ -1,7 +1,15 @@
+const fetch = jest.fn();
+
+jest.mock('undici', () => {
+  return {
+    ...jest.requireActual('undici'),
+    fetch: fetch
+  };
+});
+
 import { Context, Status } from '@tinkoff/request-core';
 import http from './http';
 
-const fetch = jest.spyOn(globalThis, 'fetch');
 const plugin = http();
 const next = jest.fn();
 
