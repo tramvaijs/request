@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.15.1](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-protocol-http@0.15.0...@tinkoff/request-plugin-protocol-http@0.15.1) (2025-10-07)
+
+**Note:** Version bump only for package @tinkoff/request-plugin-protocol-http
+
+
+
+
+
 # [0.15.0](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-protocol-http@0.14.0...@tinkoff/request-plugin-protocol-http@0.15.0) (2025-10-06)
 
 
