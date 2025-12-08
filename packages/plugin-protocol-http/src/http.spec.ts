@@ -9,6 +9,8 @@ jest.mock('undici', () => {
 
 import { Context, Status } from '@tinkoff/request-core';
 import http from './http';
+import https from 'https';
+import { Agent } from 'undici';
 
 const plugin = http();
 const next = jest.fn();
@@ -162,13 +164,9 @@ describe('plugins/http', () => {
         });
         (fetch as any).mockReturnValueOnce(mockResponse);
 
-        class MockedAgent {
-            dispatch() {}
-        }
+        const mockedAgent = new Agent();
 
-        const mockedAgent = new MockedAgent();
-
-        http({ agent: { http: mockedAgent as any, https: undefined as any } }).init?.(
+        http({ agent: { http: mockedAgent, https: undefined as any } }).init?.(
             new Context({
                 request: {
                     url: 'http://test.com/api',
@@ -202,6 +200,50 @@ describe('plugins/http', () => {
         });
     });
 
+    it('request with wrong https agent', async () => {
+        const body = { a: 3 };
+        const mockResponse = createResponse(body, {
+            headers: {
+                'Content-type': 'application/json;',
+            },
+        });
+        (fetch as any).mockReturnValueOnce(mockResponse);
+
+        const mockedAgent = new https.Agent();
+
+        http({ agent: { http: undefined as any, https: mockedAgent as any } }).init?.(
+            new Context({
+                request: {
+                    url: 'https://test.com/api',
+                    headers: {
+                        'Content-type': 'application/json',
+                    },
+                },
+            }),
+            next,
+            null as any
+        );
+
+        await new Promise((res) => {
+            next.mockImplementation(res);
+        });
+
+        expect(fetch as any).toHaveBeenCalledWith('https://test.com/api', {
+            method: 'GET',
+            credentials: 'same-origin',
+            body: undefined,
+            headers: {
+                'Content-type': 'application/json',
+            },
+            signal: expect.anything(),
+        });
+
+        expect(next).toHaveBeenLastCalledWith({
+            response: body,
+            status: Status.COMPLETE,
+        });
+    });
+
     it('request with custom https agent', async () => {
         const body = { a: 3 };
         const mockResponse = createResponse(body, {
@@ -211,13 +253,9 @@ describe('plugins/http', () => {
         });
         (fetch as any).mockReturnValueOnce(mockResponse);
 
-        class MockedAgent {
-            dispatch() {}
-        }
+        const mockedAgent = new Agent();
 
-        const mockedAgent = new MockedAgent();
-
-        http({ agent: { http: undefined as any, https: mockedAgent as any } }).init?.(
+        http({ agent: { http: undefined as any, https: mockedAgent } }).init?.(
             new Context({
                 request: {
                     url: 'https://test.com/api',
