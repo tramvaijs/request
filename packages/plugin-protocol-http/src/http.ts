@@ -3,15 +3,13 @@ import { Plugin, Status } from '@tinkoff/request-core';
 import { Query, QuerySerializer } from '@tinkoff/request-url-utils';
 import { addQuery, normalizeUrl } from '@tinkoff/request-url-utils';
 
-import { fetch } from './fetch';
+import { fetch, HttpAgent, HttpsAgent } from './fetch';
 import { serialize } from './serialize';
 import { PROTOCOL_HTTP, REQUEST_TYPES, HttpMethods } from './constants';
 import parse from './parse';
 import createForm from './form';
 import { TimeoutError, AbortError, HttpRequestError } from './errors';
-import { Agent } from 'undici';
-import type { Agent as HttpAgent } from 'http';
-import type { Agent as HttpsAgent } from 'https';
+import type { Dispatcher } from 'undici/types';
 
 declare module '@tinkoff/request-core/lib/types.h' {
     export interface Request {
@@ -51,10 +49,13 @@ declare module '@tinkoff/request-core/lib/types.h' {
 }
 
 const isBrowser = typeof window !== 'undefined';
-const getWarnMessage = (agentType: 'http' | 'https') => `Provided ${agentType} agent is not an instance of undici, so it will be ignored`;
+const showWarn = (agentType: 'http' | 'https') =>
+    console.warn(
+        `Starting from 0.15.0 plugin-protocol-http use undici fetch and corresponding Agent\nProvided ${agentType} Agent from node:${agentType} module, so it will be ignored`
+    );
 
-function isProvidedAgentUndiciInstance(agent: HttpAgent | HttpsAgent | Agent): boolean {
-    return agent instanceof Agent;
+function isProvidedAgentBelongsNode(agent: HttpAgent | HttpsAgent | Dispatcher): boolean {
+    return agent instanceof HttpAgent || agent instanceof HttpsAgent;
 }
 
 /**
@@ -74,7 +75,7 @@ function isProvidedAgentUndiciInstance(agent: HttpAgent | HttpsAgent | Agent): b
  *      abortPromise {Promise}
  *      signal {AbortSignal}
  *
- * @param {agent} [agent = Agent] set custom agent for fetch in node js. The browser ignores this parameter.
+ * @param {agent} agent set custom agent for fetch in node js. The browser ignores this parameter.
  * @param {QuerySerializer} querySerializer function that will be used instead of default value to serialize query strings in url
  * @return {{init: init}}
  */
@@ -82,10 +83,10 @@ export default ({
     agent,
     querySerializer,
 }: {
-    agent?: { http: Agent; https: Agent };
+    agent?: { http: Dispatcher; https: Dispatcher };
     querySerializer?: QuerySerializer;
 } = {}): Plugin => {
-    let customAgent: (url: string) => undefined | Agent = () => undefined;
+    let customAgent: (url: string) => undefined | Dispatcher = () => undefined;
 
     if (!isBrowser && agent) {
         customAgent = (url) => {
@@ -93,8 +94,8 @@ export default ({
                 const parsedUrl = new URL(url);
 
                 if (parsedUrl.protocol === 'http:') {
-                    if (!isProvidedAgentUndiciInstance(agent.http)) {
-                        console.warn(getWarnMessage('http'));
+                    if (isProvidedAgentBelongsNode(agent.http)) {
+                        showWarn('http');
                         return undefined;
                     }
 
@@ -102,8 +103,8 @@ export default ({
                 }
             } catch (_err) {}
 
-            if (!isProvidedAgentUndiciInstance(agent.https)) {
-                console.warn(getWarnMessage('https'));
+            if (isProvidedAgentBelongsNode(agent.https)) {
+                showWarn('https');
                 return undefined;
             }
 

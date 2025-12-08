@@ -23,4 +23,7 @@ const fetch = (...args) => {
 
 const { Headers, Request, Response } = glob;
 
-export { fetch, Headers, Request, Response };
+class HttpAgent {}
+class HttpsAgent {}
+
+export { fetch, Headers, Request, Response, HttpAgent, HttpsAgent};

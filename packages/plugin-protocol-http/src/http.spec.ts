@@ -10,7 +10,7 @@ jest.mock('undici', () => {
 import { Context, Status } from '@tinkoff/request-core';
 import http from './http';
 import https from 'https';
-import { Agent } from 'undici';
+import { Agent, EnvHttpProxyAgent } from 'undici';
 
 const plugin = http();
 const next = jest.fn();
@@ -273,6 +273,51 @@ describe('plugins/http', () => {
         });
 
         expect(fetch as any).toHaveBeenCalledWith('https://test.com/api', {
+            dispatcher: mockedAgent,
+            method: 'GET',
+            credentials: 'same-origin',
+            body: undefined,
+            headers: {
+                'Content-type': 'application/json',
+            },
+            signal: expect.anything(),
+        });
+
+        expect(next).toHaveBeenLastCalledWith({
+            response: body,
+            status: Status.COMPLETE,
+        });
+    });
+
+    it('request with custom EnvHttpProxyAgent agent', async () => {
+        const body = { a: 3 };
+        const mockResponse = createResponse(body, {
+            headers: {
+                'Content-type': 'application/json',
+            },
+        });
+        (fetch as any).mockReturnValueOnce(mockResponse);
+
+        const mockedAgent = new EnvHttpProxyAgent();
+
+        http({ agent: { http: mockedAgent, https: undefined as any } }).init?.(
+            new Context({
+                request: {
+                    url: 'http://test.com/api',
+                    headers: {
+                        'Content-type': 'application/json',
+                    },
+                },
+            }),
+            next,
+            null as any
+        );
+
+        await new Promise((res) => {
+            next.mockImplementation(res);
+        });
+
+        expect(fetch as any).toHaveBeenCalledWith('http://test.com/api', {
             dispatcher: mockedAgent,
             method: 'GET',
             credentials: 'same-origin',
