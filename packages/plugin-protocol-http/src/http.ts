@@ -9,7 +9,9 @@ import { PROTOCOL_HTTP, REQUEST_TYPES, HttpMethods } from './constants';
 import parse from './parse';
 import createForm from './form';
 import { TimeoutError, AbortError, HttpRequestError } from './errors';
-import type { Agent } from 'undici/types';
+import { Agent } from 'undici';
+import type { Agent as HttpAgent } from 'http';
+import type { Agent as HttpsAgent } from 'https';
 
 declare module '@tinkoff/request-core/lib/types.h' {
     export interface Request {
@@ -49,6 +51,11 @@ declare module '@tinkoff/request-core/lib/types.h' {
 }
 
 const isBrowser = typeof window !== 'undefined';
+const getWarnMessage = (agentType: 'http' | 'https') => `Provided ${agentType} agent is not an instance of undici, so it will be ignored`;
+
+function isProvidedAgentUndiciInstance(agent: HttpAgent | HttpsAgent | Agent): boolean {
+    return agent instanceof Agent;
+}
 
 /**
  * Makes http/https request.
@@ -86,9 +93,19 @@ export default ({
                 const parsedUrl = new URL(url);
 
                 if (parsedUrl.protocol === 'http:') {
+                    if (!isProvidedAgentUndiciInstance(agent.http)) {
+                        console.warn(getWarnMessage('http'));
+                        return undefined;
+                    }
+
                     return agent.http;
                 }
             } catch (_err) {}
+
+            if (!isProvidedAgentUndiciInstance(agent.https)) {
+                console.warn(getWarnMessage('https'));
+                return undefined;
+            }
 
             return agent.https;
         };
