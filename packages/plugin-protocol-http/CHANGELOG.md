@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.16.0](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-protocol-http@0.15.1...@tinkoff/request-plugin-protocol-http@0.16.0) (2025-12-08)
+
+
+### Bug Fixes
+
+* http agent type ([8bd7d73](https://github.com/Tinkoff/tinkoff-request/commit/8bd7d73ad9490fd818de9e7b08f923e86f7ad0f0))
+
+
+### Features
+
+* warning when wrong http agent used ([d26c361](https://github.com/Tinkoff/tinkoff-request/commit/d26c361d63365dbc36b018ccea4ae638b125054f))
+
+
+
+
+
 ## [0.15.1](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-protocol-http@0.15.0...@tinkoff/request-plugin-protocol-http@0.15.1) (2025-10-07)
 
 **Note:** Version bump only for package @tinkoff/request-plugin-protocol-http
