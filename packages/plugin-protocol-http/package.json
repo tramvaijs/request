@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "browser": {
-    "lib/fetch.js": "./lib/fetch.browser.js",
+    "./lib/fetch.js": "./lib/fetch.browser.js",
     "./lib/index.es.js": "./lib/index.browser.js"
   },
   "sideEffects": false,
