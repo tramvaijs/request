@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.1](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-retry@0.3.0...@tinkoff/request-plugin-retry@0.3.1) (2026-05-14)
+
+
+### Bug Fixes
+
+* retry with dedupe error ([7a91320](https://github.com/Tinkoff/tinkoff-request/commit/7a91320696cb385f3e291cabd4d5a7cf2ae6ae7a))
+
+
+
+
+
 # 0.3.0 (2023-12-06)
 
 
