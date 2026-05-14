@@ -12,6 +12,24 @@ const wait = async (times = 1) => {
     }
 };
 
+const baseRetryRequestOptions = {
+    retryDelay: undefined,
+    retry: 0,
+    silent: true,
+    cache: false,
+    forcedCache: false,
+    deduplicateCache: false,
+    deduplicateCacheForce: false,
+    etagCache: false,
+    etagCacheForce: false,
+    fallbackCache: false,
+    fallbackCacheForce: false,
+    memoryCache: false,
+    memoryCacheForce: false,
+    persistentCache: false,
+    persistentCacheForce: false,
+};
+
 describe('plugins/retry', () => {
     let context: Context;
     const next = jest.fn();
@@ -53,7 +71,7 @@ describe('plugins/retry', () => {
                 plugin.error(context, next, makeRequest);
 
                 await wait();
-                expect(makeRequest).toHaveBeenCalledWith({ url, retry: 0, silent: true, timeout: 50000, cache: false });
+                expect(makeRequest).toHaveBeenCalledWith({ ...baseRetryRequestOptions, url, timeout: 50000 });
                 expect(makeRequest).toHaveBeenCalledTimes(1);
                 expect(next).toHaveBeenCalledWith({
                     status: Status.COMPLETE,
@@ -82,9 +100,9 @@ describe('plugins/retry', () => {
                 plugin.error(context, next, makeRequest);
 
                 await wait(3);
-                expect(makeRequest).toHaveBeenCalledWith({ url, retry: 0, silent: true, timeout: 50000, cache: false });
-                expect(makeRequest).toHaveBeenCalledWith({ url, retry: 0, silent: true, timeout: 40000, cache: false });
-                expect(makeRequest).toHaveBeenCalledWith({ url, retry: 0, silent: true, timeout: 30000, cache: false });
+                expect(makeRequest).toHaveBeenCalledWith({ ...baseRetryRequestOptions, url, timeout: 50000 });
+                expect(makeRequest).toHaveBeenCalledWith({ ...baseRetryRequestOptions, url, timeout: 40000 });
+                expect(makeRequest).toHaveBeenCalledWith({ ...baseRetryRequestOptions, url, timeout: 30000 });
                 expect(makeRequest).toHaveBeenCalledTimes(3);
                 expect(next).toHaveBeenCalledWith({
                     status: Status.COMPLETE,
@@ -111,9 +129,9 @@ describe('plugins/retry', () => {
                 plugin.error(context, next, makeRequest);
 
                 await wait(3);
-                expect(makeRequest).toHaveBeenCalledWith({ url, retry: 0, silent: true, timeout: 50000, cache: false });
-                expect(makeRequest).toHaveBeenCalledWith({ url, retry: 0, silent: true, timeout: 45000, cache: false });
-                expect(makeRequest).toHaveBeenCalledWith({ url, retry: 0, silent: true, timeout: 40000, cache: false });
+                expect(makeRequest).toHaveBeenCalledWith({ ...baseRetryRequestOptions, url, timeout: 50000 });
+                expect(makeRequest).toHaveBeenCalledWith({ ...baseRetryRequestOptions, url, timeout: 45000 });
+                expect(makeRequest).toHaveBeenCalledWith({ ...baseRetryRequestOptions, url, timeout: 40000 });
                 expect(makeRequest).toHaveBeenCalledTimes(3);
                 expect(next).toHaveBeenCalledWith();
                 expect(context.getExternalMeta(RETRY_META)).toEqual({
@@ -141,7 +159,7 @@ describe('plugins/retry', () => {
                 plugin.error(context, next, makeRequest);
 
                 await wait(3);
-                expect(makeRequest).toHaveBeenCalledWith({ url, retry: 0, silent: true, timeout: 50000, cache: false });
+                expect(makeRequest).toHaveBeenCalledWith({ ...baseRetryRequestOptions, url, timeout: 50000 });
                 expect(makeRequest).toHaveBeenCalledTimes(3);
                 expect(next).toHaveBeenCalledWith({
                     status: Status.COMPLETE,
@@ -195,7 +213,7 @@ describe('plugins/retry', () => {
                 expect(retryDelay).toHaveBeenCalledWith(0);
                 expect(retryDelay).toHaveBeenCalledWith(1);
                 expect(retryDelay).toHaveBeenCalledWith(2);
-                expect(makeRequest).toHaveBeenCalledWith({ url, retry: 0, silent: true, timeout: 60000, cache: false });
+                expect(makeRequest).toHaveBeenCalledWith({ ...baseRetryRequestOptions, url, timeout: 60000 });
                 expect(makeRequest).toHaveBeenCalledTimes(3);
                 expect(next).toHaveBeenCalledWith({
                     status: Status.COMPLETE,
@@ -230,7 +248,7 @@ describe('plugins/retry', () => {
                 expect(retryDelay).toHaveBeenCalledWith(0);
                 expect(retryDelay).toHaveBeenCalledWith(1);
                 expect(retryDelay).toHaveBeenCalledWith(2);
-                expect(makeRequest).toHaveBeenCalledWith({ url, retry: 0, silent: true, timeout: 50000, cache: false });
+                expect(makeRequest).toHaveBeenCalledWith({ ...baseRetryRequestOptions, url, timeout: 50000 });
                 expect(makeRequest).toHaveBeenCalledTimes(3);
                 expect(next).toHaveBeenCalledWith({
                     status: Status.COMPLETE,
@@ -261,8 +279,8 @@ describe('plugins/retry', () => {
                 plugin.error(context, next, makeRequest);
 
                 await wait(3);
-                expect(makeRequest).toHaveBeenCalledWith({ url, retry: 0, silent: true, timeout: 10000, cache: false });
-                expect(makeRequest).toHaveBeenCalledWith({ url, retry: 0, silent: true, timeout: 5000, cache: false });
+                expect(makeRequest).toHaveBeenCalledWith({ ...baseRetryRequestOptions, url, timeout: 10000  });
+                expect(makeRequest).toHaveBeenCalledWith({ ...baseRetryRequestOptions, url, timeout: 5000  });
                 expect(makeRequest).toHaveBeenCalledTimes(2);
                 expect(next).toHaveBeenCalledWith();
                 expect(context.getExternalMeta(RETRY_META)).toEqual({
@@ -289,7 +307,7 @@ describe('plugins/retry', () => {
                 plugin.error(context, next, makeRequest);
 
                 await wait(3);
-                expect(makeRequest).toHaveBeenCalledWith({ url, retry: 0, silent: true, timeout: 2000, cache: false });
+                expect(makeRequest).toHaveBeenCalledWith({ ...baseRetryRequestOptions, url, timeout: 2000 });
                 expect(makeRequest).toHaveBeenCalledTimes(1);
                 expect(next).toHaveBeenCalledWith();
                 expect(context.getExternalMeta(RETRY_META)).toEqual({

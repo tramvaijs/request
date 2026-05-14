@@ -74,6 +74,17 @@ export default ({
                             // to prevent deduplicating new request with the initial one
                             // all of the caching will still be happen for initial request on complete
                             cache: false,
+                            forcedCache: false,
+                            deduplicateCache: false,
+                            deduplicateCacheForce: false,
+                            etagCache: false,
+                            etagCacheForce: false,
+                            fallbackCache: false,
+                            fallbackCacheForce: false,
+                            memoryCache: false,
+                            memoryCacheForce: false,
+                            persistentCache: false,
+                            persistentCacheForce: false,
                         }).then(
                             (response) => {
                                 context.updateExternalMeta(RETRY_META, {
