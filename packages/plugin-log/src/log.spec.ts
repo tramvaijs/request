@@ -327,6 +327,80 @@ describe('plugins/log', () => {
         });
     });
 
+    describe('extensions', () => {
+        it('applies extension to init', () => {
+            const extension = jest.fn((logObj, ctx) => ({
+                ...logObj,
+                someField: ctx.getRequest().someField,
+            }));
+            const plugin = log({ logger, name: 'test', extensions: [extension] });
+
+            context.setState({ request: { url: 'test1', someField: 'aaa' } });
+            plugin.init(context, next, null);
+
+            expect(extension).toHaveBeenCalledWith({ event: 'init', info: { url: 'test1' } }, context);
+            expect(mockDebug).toHaveBeenLastCalledWith({
+                event: 'init',
+                info: { url: 'test1' },
+                someField: 'aaa',
+            });
+        });
+
+        it('applies extension to complete', () => {
+            const extension = jest.fn((logObj) => ({
+                ...logObj,
+                someField: '456',
+            }));
+            const plugin = log({ logger, name: 'test', extensions: [extension] });
+            const start = 1242152525;
+
+            context.setState({ request: { url: 'test2' } });
+            context.updateExternalMeta(LOG, { start });
+            plugin.complete(context, next, null);
+
+            expect(extension).toHaveBeenCalledWith(expect.objectContaining({ event: 'complete' }), context);
+            expect(mockDebug).toHaveBeenLastCalledWith(
+                expect.objectContaining({
+                    event: 'complete',
+                    someField: '456',
+                })
+            );
+        });
+
+        it('applies extension to error', () => {
+            const ext1 = jest.fn((logObj) => ({ ...logObj, a: 1 }));
+            const ext2 = jest.fn((logObj) => ({ ...logObj, b: 2, a: logObj.a + 10 }));
+            const plugin = log({ logger, name: 'test', extensions: [ext1, ext2] });
+            const start = 1242152525;
+            const error = new Error('test');
+
+            context.setState({ request: { url: 'test3' }, error });
+            context.updateExternalMeta(LOG, { start });
+            plugin.error(context, next, null);
+
+            expect(ext1).toHaveBeenCalledWith(expect.objectContaining({ event: 'error' }), context);
+            expect(ext2).toHaveBeenCalledWith(expect.objectContaining({ a: 1 }), context);
+            expect(mockError).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    event: 'error',
+                    a: 11,
+                    b: 2,
+                })
+            );
+        });
+
+        it('does not apply extensions when silent', () => {
+            const extension = jest.fn((logObj) => ({ ...logObj, extra: true }));
+            const plugin = log({ logger, name: 'test', extensions: [extension] });
+
+            context.setState({ request: { url: 'test1', silent: true } });
+            plugin.init(context, next, null);
+
+            expect(extension).not.toHaveBeenCalled();
+            expect(mockDebug).not.toHaveBeenCalled();
+        });
+    });
+
     describe('show all fields', () => {
         const plugin = log({ logger, name: 'test', showQueryFields: true, showPayloadFields: true });
 
