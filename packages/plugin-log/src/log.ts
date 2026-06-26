@@ -31,6 +31,8 @@ interface Logger {
     error: LogFunction;
 }
 
+export type LogExtension = (logObj: Record<string, any>, context: Context) => Record<string, any>;
+
 const defaultLogger = (name: string): Logger => {
     return {
         debug: (...args) => console.debug(name, ...args), // tslint:disable-line:no-console
@@ -78,13 +80,24 @@ export default ({
     logger = defaultLogger,
     showQueryFields: globalShowQueryFields = false,
     showPayloadFields: globalShowPayloadFields = false,
+    extensions = [],
 }: {
     name?: string;
     logger?: (name: string) => Logger;
     showQueryFields?: boolean | string[];
     showPayloadFields?: boolean | string[];
+    extensions?: LogExtension[];
 }): Plugin => {
     const log = logger(`request.${name}`);
+    const applyExtensions = (logObj: Record<string, any>, context: Context) => {
+        let result = logObj;
+
+        for (const extend of extensions) {
+            result = extend(result, context);
+        }
+
+        return result;
+    };
     const getInfo = ({ url, query, payload, showQueryFields, showPayloadFields }: Request) => {
         const showQuery = showQueryFields ?? globalShowQueryFields;
         const showPayload = showPayloadFields ?? globalShowPayloadFields;
@@ -103,10 +116,11 @@ export default ({
             const silent = prop('silent', request);
 
             if (!silent) {
-                log.debug({
+                const logObj = {
                     event: 'init',
                     info: getInfo(request),
-                });
+                };
+                log.debug(applyExtensions(logObj, context));
             }
 
             context.updateExternalMeta(LOG, {
@@ -122,11 +136,12 @@ export default ({
             const silent = prop('silent', request);
 
             if (!silent) {
-                log.debug({
+                const logObj = {
                     event: 'complete',
                     info: getInfo(request),
                     meta: context.getExternalMeta(),
-                });
+                };
+                log.debug(applyExtensions(logObj, context));
             }
 
             next();
@@ -137,12 +152,13 @@ export default ({
 
             fillDuration(context);
             if (!silent) {
-                log.error({
+                const logObj = {
                     event: 'error',
                     info: getInfo(request),
                     error: context.getState().error,
                     meta: context.getExternalMeta(),
-                });
+                };
+                log.error(applyExtensions(logObj, context));
             }
 
             next();
