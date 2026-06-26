@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-log@0.10.0...@tinkoff/request-plugin-log@0.11.0) (2026-06-26)
+
+
+### Features
+
+* add extensions support for log plugin to enrich log objects ([c92b05f](https://github.com/Tinkoff/tinkoff-request/commit/c92b05ffa775516657b83842d5a6fd5af1de2bba))
+
+
+
+
+
 # 0.10.0 (2023-12-06)
 
 

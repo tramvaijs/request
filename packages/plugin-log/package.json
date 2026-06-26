@@ -1,6 +1,6 @@
 {
   "name": "@tinkoff/request-plugin-log",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Log debug info abour running requests",
   "main": "lib/log.js",
   "typings": "lib/log.d.ts",
