@@ -61,6 +61,48 @@ describe('plugins/http', () => {
         });
     });
 
+    it('request forwards priority to fetch', async () => {
+        const mockResponse = createResponse(
+            { a: 3 },
+            { headers: { 'content-type': 'application/json' } }
+        );
+
+        (fetch as any).mockReturnValueOnce(mockResponse);
+
+        plugin.init!(new Context({ request: { url: 'test', priority: 'low' } }), next, null as any);
+
+        jest.runAllTimers();
+
+        expect(fetch as any).toHaveBeenCalledWith(
+            'http://test',
+            expect.objectContaining({ priority: 'low' })
+        );
+
+        await new Promise((res) => {
+            next.mockImplementation(res);
+        });
+    });
+
+    it('request omits priority from fetch when not set', async () => {
+        const mockResponse = createResponse(
+            { a: 3 },
+            { headers: { 'content-type': 'application/json' } }
+        );
+
+        (fetch as any).mockReturnValueOnce(mockResponse);
+
+        plugin.init!(new Context({ request: { url: 'test' } }), next, null as any);
+
+        jest.runAllTimers();
+
+        const [, options] = (fetch as any).mock.calls[0];
+        expect(options.priority).toBeUndefined();
+
+        await new Promise((res) => {
+            next.mockImplementation(res);
+        });
+    });
+
     it('request attaches', async () => {
         const mockResponse = createResponse({ body: '' });
         const payload = {

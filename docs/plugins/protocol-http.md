@@ -29,6 +29,7 @@ Uses native nodejs fetch.
 - `credentials`: string - configure credentials type, [see](#request-credentials)
 - `abortPromise`: Promise - if passed promise resolves, request get aborted with the result of promise
 - `signal`: AbortSignal - signal used to abort current request
+- `priority`: 'auto' | 'high' | 'low' - forwarded to fetch as-is ([Priority Hints API](https://developer.mozilla.org/en-US/docs/Web/API/RequestInit#priority)). Browser-only effect; accepted but not acted on in Node (undici)
 
 ## Request type
 Defines how request payload get serialized and the value for 'Content-Type' header. By default is equal to `form`.

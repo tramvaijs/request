@@ -37,6 +37,8 @@ declare module '@tinkoff/request-core/lib/types.h' {
         withCredentials?: boolean;
         abortPromise?: Promise<any>;
         signal?: AbortSignal;
+        /** Priority Hints API, forwarded to fetch as-is. Browser-only effect; no-op in Node. */
+        priority?: 'auto' | 'high' | 'low';
     }
 
     export interface RequestErrorCode {
@@ -45,6 +47,13 @@ declare module '@tinkoff/request-core/lib/types.h' {
         ERR_HTTP_ERROR: 'ERR_HTTP_ERROR';
 
         ABORT_ERR: 'ABORT_ERR';
+    }
+}
+
+// `priority` isn't in RequestInit until TS 5.4's lib.dom.d.ts; augment so fetch() below needs no cast.
+declare global {
+    interface RequestInit {
+        priority?: 'auto' | 'high' | 'low';
     }
 }
 
@@ -129,6 +138,7 @@ export default ({
                 abortPromise,
                 responseType,
                 signal: argSignal,
+                priority,
             } = context.getRequest();
 
             let ended = false;
@@ -220,6 +230,7 @@ export default ({
                 dispatcher: customAgent(normalizedUrl),
                 credentials: credentials ?? (withCredentials ? 'include' : 'same-origin'),
                 body,
+                priority,
             })
                 .then((resp) => {
                     response = resp;
