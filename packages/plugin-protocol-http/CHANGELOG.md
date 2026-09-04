@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.16.1](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-protocol-http@0.16.0...@tinkoff/request-plugin-protocol-http@0.16.1) (2026-09-04)
+
+
+### Bug Fixes
+
+* fetch priority support ([634cebb](https://github.com/Tinkoff/tinkoff-request/commit/634cebb7a52b49015daf0c9f7bf6e9422c9ae8b2))
+
+
+
+
+
 # [0.16.0](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-protocol-http@0.15.1...@tinkoff/request-plugin-protocol-http@0.16.0) (2025-12-08)
 
 
