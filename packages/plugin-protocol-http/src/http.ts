@@ -39,6 +39,10 @@ declare module '@tinkoff/request-core/lib/types.h' {
         signal?: AbortSignal;
         /** Priority Hints API, forwarded to fetch as-is. Browser-only effect; no-op in Node. */
         priority?: 'auto' | 'high' | 'low';
+        /** Referrer policy, forwarded to fetch as-is. */
+        referrerPolicy?: ReferrerPolicy;
+        /** Referrer, forwarded to fetch as-is. */
+        referrer?: string;
     }
 
     export interface RequestErrorCode {
@@ -139,6 +143,8 @@ export default ({
                 responseType,
                 signal: argSignal,
                 priority,
+                referrerPolicy,
+                referrer,
             } = context.getRequest();
 
             let ended = false;
@@ -231,6 +237,8 @@ export default ({
                 credentials: credentials ?? (withCredentials ? 'include' : 'same-origin'),
                 body,
                 priority,
+                referrerPolicy,
+                referrer,
             })
                 .then((resp) => {
                     response = resp;

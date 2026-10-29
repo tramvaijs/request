@@ -103,6 +103,62 @@ describe('plugins/http', () => {
         });
     });
 
+    it('request forwards referrerPolicy and referrer to fetch', async () => {
+        const mockResponse = createResponse(
+            { a: 3 },
+            { headers: { 'content-type': 'application/json' } }
+        );
+
+        (fetch as any).mockReturnValueOnce(mockResponse);
+
+        plugin.init!(
+            new Context({
+                request: {
+                    url: 'test',
+                    referrerPolicy: 'no-referrer-when-downgrade',
+                    referrer: 'http://test/referrer',
+                },
+            }),
+            next,
+            null as any
+        );
+
+        jest.runAllTimers();
+
+        expect(fetch as any).toHaveBeenCalledWith(
+            'http://test',
+            expect.objectContaining({
+                referrerPolicy: 'no-referrer-when-downgrade',
+                referrer: 'http://test/referrer',
+            })
+        );
+
+        await new Promise((res) => {
+            next.mockImplementation(res);
+        });
+    });
+
+    it('request omits referrerPolicy and referrer from fetch when not set', async () => {
+        const mockResponse = createResponse(
+            { a: 3 },
+            { headers: { 'content-type': 'application/json' } }
+        );
+
+        (fetch as any).mockReturnValueOnce(mockResponse);
+
+        plugin.init!(new Context({ request: { url: 'test' } }), next, null as any);
+
+        jest.runAllTimers();
+
+        const [, options] = (fetch as any).mock.calls[0];
+        expect(options.referrerPolicy).toBeUndefined();
+        expect(options.referrer).toBeUndefined();
+
+        await new Promise((res) => {
+            next.mockImplementation(res);
+        });
+    });
+
     it('request attaches', async () => {
         const mockResponse = createResponse({ body: '' });
         const payload = {
