@@ -13,7 +13,6 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-          token: ${{ secrets.TRAMVAI_GH_PAGES_PAT }}
 
       - uses: actions/setup-node@v5
         with:
@@ -36,6 +35,15 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: andresz1/size-limit-action@v1
+      - name: Compare sizes and comment
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        uses: andresz1/size-limit-action@v1
         with:
-          github_token: ${{ secrets.TRAMVAI_GH_PAGES_PAT }}
+          github_token: ${{ github.token }}
+
+      - name: Check size limits
+        if: github.event.pull_request.head.repo.full_name != github.repository
+        run: |
+          yarn
+          yarn build
+          npx --no-install size-limit
