@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.17.0](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-protocol-http@0.16.1...@tinkoff/request-plugin-protocol-http@0.17.0) (2026-11-03)
+
+
+### Features
+
+* **plugin-protocol-http:** add referrerPolicy and referrer options ([5e21853](https://github.com/Tinkoff/tinkoff-request/commit/5e21853acd3ae634df4c5114494b1de6bc46d47d))
+
+
+
+
+
 ## [0.16.1](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-protocol-http@0.16.0...@tinkoff/request-plugin-protocol-http@0.16.1) (2026-09-04)
 
 
