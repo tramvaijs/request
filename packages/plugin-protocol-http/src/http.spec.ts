@@ -61,49 +61,18 @@ describe('plugins/http', () => {
         });
     });
 
-    it('request forwards priority to fetch', async () => {
-        const mockResponse = createResponse(
-            { a: 3 },
-            { headers: { 'content-type': 'application/json' } }
-        );
+    const forwardedFetchOptions: [string, any][] = [
+        ['priority', 'low'],
+        ['referrerPolicy', 'no-referrer-when-downgrade'],
+        ['referrer', 'http://test/referrer'],
+        ['keepalive', true],
+        ['integrity', 'sha256-BpfBw7ivV8q2jBiXtDbjG0LH0Gz0Wvg0GmNxUKpzQs'],
+        ['mode', 'cors'],
+        ['redirect', 'manual'],
+        ['duplex', 'half'],
+    ];
 
-        (fetch as any).mockReturnValueOnce(mockResponse);
-
-        plugin.init!(new Context({ request: { url: 'test', priority: 'low' } }), next, null as any);
-
-        jest.runAllTimers();
-
-        expect(fetch as any).toHaveBeenCalledWith(
-            'http://test',
-            expect.objectContaining({ priority: 'low' })
-        );
-
-        await new Promise((res) => {
-            next.mockImplementation(res);
-        });
-    });
-
-    it('request omits priority from fetch when not set', async () => {
-        const mockResponse = createResponse(
-            { a: 3 },
-            { headers: { 'content-type': 'application/json' } }
-        );
-
-        (fetch as any).mockReturnValueOnce(mockResponse);
-
-        plugin.init!(new Context({ request: { url: 'test' } }), next, null as any);
-
-        jest.runAllTimers();
-
-        const [, options] = (fetch as any).mock.calls[0];
-        expect(options.priority).toBeUndefined();
-
-        await new Promise((res) => {
-            next.mockImplementation(res);
-        });
-    });
-
-    it('request forwards referrerPolicy and referrer to fetch', async () => {
+    it.each(forwardedFetchOptions)('request forwards %s to fetch', async (option, value) => {
         const mockResponse = createResponse(
             { a: 3 },
             { headers: { 'content-type': 'application/json' } }
@@ -112,13 +81,7 @@ describe('plugins/http', () => {
         (fetch as any).mockReturnValueOnce(mockResponse);
 
         plugin.init!(
-            new Context({
-                request: {
-                    url: 'test',
-                    referrerPolicy: 'no-referrer-when-downgrade',
-                    referrer: 'http://test/referrer',
-                },
-            }),
+            new Context({ request: { url: 'test', [option]: value } }),
             next,
             null as any
         );
@@ -127,10 +90,7 @@ describe('plugins/http', () => {
 
         expect(fetch as any).toHaveBeenCalledWith(
             'http://test',
-            expect.objectContaining({
-                referrerPolicy: 'no-referrer-when-downgrade',
-                referrer: 'http://test/referrer',
-            })
+            expect.objectContaining({ [option]: value })
         );
 
         await new Promise((res) => {
@@ -138,7 +98,7 @@ describe('plugins/http', () => {
         });
     });
 
-    it('request omits referrerPolicy and referrer from fetch when not set', async () => {
+    it('request omits forwarded fetch options when not set', async () => {
         const mockResponse = createResponse(
             { a: 3 },
             { headers: { 'content-type': 'application/json' } }
@@ -151,8 +111,9 @@ describe('plugins/http', () => {
         jest.runAllTimers();
 
         const [, options] = (fetch as any).mock.calls[0];
-        expect(options.referrerPolicy).toBeUndefined();
-        expect(options.referrer).toBeUndefined();
+        for (const [option] of forwardedFetchOptions) {
+            expect(options[option]).toBeUndefined();
+        }
 
         await new Promise((res) => {
             next.mockImplementation(res);
