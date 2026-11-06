@@ -9,7 +9,7 @@ import { PROTOCOL_HTTP, REQUEST_TYPES, HttpMethods } from './constants';
 import parse from './parse';
 import createForm from './form';
 import { TimeoutError, AbortError, HttpRequestError } from './errors';
-import type { Dispatcher } from 'undici/types';
+import type { Dispatcher, RequestDuplex } from 'undici/types';
 
 declare module '@tinkoff/request-core/lib/types.h' {
     export interface Request {
@@ -37,12 +37,17 @@ declare module '@tinkoff/request-core/lib/types.h' {
         withCredentials?: boolean;
         abortPromise?: Promise<any>;
         signal?: AbortSignal;
+
+        /** Fetch options */
+        referrerPolicy?: ReferrerPolicy;
         /** Priority Hints API, forwarded to fetch as-is. Browser-only effect; no-op in Node. */
         priority?: 'auto' | 'high' | 'low';
-        /** Referrer policy, forwarded to fetch as-is. */
-        referrerPolicy?: ReferrerPolicy;
-        /** Referrer, forwarded to fetch as-is. */
         referrer?: string;
+        keepalive?: boolean;
+        integrity?: string;
+        mode?: RequestMode;
+        redirect?: RequestRedirect;
+        duplex?: RequestDuplex;
     }
 
     export interface RequestErrorCode {
@@ -145,6 +150,11 @@ export default ({
                 priority,
                 referrerPolicy,
                 referrer,
+                keepalive,
+                integrity,
+                mode,
+                redirect,
+                duplex,
             } = context.getRequest();
 
             let ended = false;
@@ -239,6 +249,11 @@ export default ({
                 priority,
                 referrerPolicy,
                 referrer,
+                keepalive,
+                integrity,
+                mode,
+                redirect,
+                duplex,
             })
                 .then((resp) => {
                     response = resp;
