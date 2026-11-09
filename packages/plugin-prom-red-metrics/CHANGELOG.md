@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.11](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-prom-red-metrics@0.3.10...@tinkoff/request-plugin-prom-red-metrics@0.3.11) (2026-11-09)
+
+**Note:** Version bump only for package @tinkoff/request-plugin-prom-red-metrics
+
+
+
+
+
 ## [0.3.10](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-prom-red-metrics@0.3.9...@tinkoff/request-plugin-prom-red-metrics@0.3.10) (2026-11-03)
 
 **Note:** Version bump only for package @tinkoff/request-plugin-prom-red-metrics

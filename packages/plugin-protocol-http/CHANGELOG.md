@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.18.0](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-protocol-http@0.17.0...@tinkoff/request-plugin-protocol-http@0.18.0) (2026-11-09)
+
+
+### Features
+
+* support more fetch options ([defcbf8](https://github.com/Tinkoff/tinkoff-request/commit/defcbf8163c6024b0b2d12de157449158cb09101))
+
+
+
+
+
 # [0.17.0](https://github.com/Tinkoff/tinkoff-request/compare/@tinkoff/request-plugin-protocol-http@0.16.1...@tinkoff/request-plugin-protocol-http@0.17.0) (2026-11-03)
 
 
